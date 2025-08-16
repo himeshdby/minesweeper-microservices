@@ -3,6 +3,8 @@ package com.minesweeper.cli;
 import com.minesweeper.game.MinesweeperGame;
 import com.minesweeper.game.exception.InvalidMoveException;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +19,8 @@ class MinesweeperCLITest {
         fixed.add(new int[]{0, 1});
         fixed.add(new int[]{1, 1});
         fixed.add(new int[]{2, 0});
-        MinesweeperGame game = new MinesweeperGame(4, 3, new Random(1L), fixed, true);
+        MinesweeperGame game = new MinesweeperGame(4, 3, new Random(1L),true);
+        ReflectionTestUtils.setField(game, "fixedMines", fixed);
 
         StringBuilder output = new StringBuilder();
         output.append("Welcome to Minesweeper!\n\n");
@@ -41,23 +44,24 @@ class MinesweeperCLITest {
         assertTrue(output.toString().contains("Congratulations, you have won the game!"));
     }
 
-//    @Test
-//    void testFailureOutput() throws InvalidMoveException {
-//        MinesweeperGame game = new MinesweeperGame(3, 3, new Random(456L), fixed, false);
-//         fixed.add(new int[]{0, 0});
-//         fixed.add(new int[]{1, 1});
-//         fixed.add(new int[]{2, 2});
-//        StringBuilder output = new StringBuilder();
-//        output.append("Welcome to Minesweeper!\n\n");
-//        output.append("Here is your minefield:\n");
-//        output.append(game.displayGrid(false)).append("\n");
-//
-//        MinesweeperGame.RevealResult result = game.revealCell("C3");
-//        assertTrue(result.mineHit, "Clicking C3 should hit the mine in the failure demo.");
-//        assertTrue(game.isGameOver(), "Game should be over after hitting a mine.");
-//        output.append("Oh no, you detonated a mine! Game over.\n");
-//        output.append(game.displayGrid(true)).append("\n");
-//
-//        assertTrue(output.toString().contains("Oh no, you detonated a mine! Game over."));
-//    }
+    @Test
+    void testFailureOutput() throws InvalidMoveException {
+        MinesweeperGame game = new MinesweeperGame(3, 3, new Random(456L),false);
+         fixed.add(new int[]{0, 0});
+         fixed.add(new int[]{1, 1});
+         fixed.add(new int[]{2, 2});
+        ReflectionTestUtils.setField(game, "fixedMines", fixed);
+        StringBuilder output = new StringBuilder();
+        output.append("Welcome to Minesweeper!\n\n");
+        output.append("Here is your minefield:\n");
+        output.append(game.displayGrid(false)).append("\n");
+
+        MinesweeperGame.RevealResult result = game.revealCell("C3");
+        assertTrue(result.mineHit, "Clicking C3 should hit the mine in the failure demo.");
+        assertTrue(game.isGameOver(), "Game should be over after hitting a mine.");
+        output.append("Oh no, you detonated a mine! Game over.\n");
+        output.append(game.displayGrid(true)).append("\n");
+
+        assertTrue(output.toString().contains("Oh no, you detonated a mine! Game over."));
+    }
 }
