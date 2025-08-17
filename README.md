@@ -84,7 +84,7 @@ D 1 1 0 0
 Congratulations, you have won the game!
 Press any key to play again...
 ```
-Failure example
+
 ```
 Welcome to Minesweeper!
 
